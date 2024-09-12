@@ -5,6 +5,9 @@ import com.numan.journalapp.dto.JournalResponseDTO;
 import com.numan.journalapp.service.JournalEntryService;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -15,8 +18,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -30,12 +31,11 @@ public class JournalEntryControllerV2 {
 
     }
 
-    @GetMapping
-    public ResponseEntity<List<JournalResponseDTO>> getAllEntries() {
-        List<JournalResponseDTO> entries = journalEntryService.getAllJournals();
-        return entries == null || entries.isEmpty()
-          ? ResponseEntity.notFound().build()
-          : ResponseEntity.ok().body(entries);
+    @GetMapping("/numberOfPage/{numberOfPage}")
+    public ResponseEntity<Page<JournalResponseDTO>> getAllEntries(@PathVariable int numberOfPage) {
+        return ResponseEntity.ok().body(journalEntryService.getAllJournals(PageRequest.of(numberOfPage,
+          10,
+          Sort.Direction.DESC, "id")));
 
     }
 

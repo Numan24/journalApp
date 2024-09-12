@@ -5,11 +5,13 @@ import com.numan.journalapp.dto.JournalResponseDTO;
 import com.numan.journalapp.entity.JournalEntry;
 import com.numan.journalapp.repo.JournalEntryRepo;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,16 +23,16 @@ public class JournalEntryService {
     this.journalEntryRepo = journalEntryRepo;
   }
 
-  public List<JournalResponseDTO> getAllJournals() {
-    List<JournalEntry> entries = journalEntryRepo.findAll();
-    List<JournalResponseDTO> responseList = new ArrayList<>();
+  public Page<JournalResponseDTO> getAllJournals(Pageable pageable) {
+    Page<JournalEntry> entries = journalEntryRepo.findAll(pageable);
+    Page<JournalResponseDTO> responseList = new PageImpl<>(new ArrayList<>());
     if (!entries.isEmpty()) {
-      entries.forEach(journalEntry -> responseList.add(
+      responseList = entries.map(journalEntry ->
           JournalResponseDTO.builder().title(journalEntry.getTitle())
             .content(journalEntry.getContent())
             .date(journalEntry.getDate())
             .build()
-          ));
+          );
     }
     return responseList;
   }
