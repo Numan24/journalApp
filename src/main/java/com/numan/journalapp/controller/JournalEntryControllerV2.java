@@ -3,6 +3,7 @@ package com.numan.journalapp.controller;
 import com.numan.journalapp.dto.JournalRequestDTO;
 import com.numan.journalapp.dto.JournalResponseDTO;
 import com.numan.journalapp.service.JournalEntryService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public class JournalEntryControllerV2 {
     }
 
     @PostMapping
-    public ResponseEntity<JournalResponseDTO> saveJournal(@RequestBody JournalRequestDTO dto) {
+    public ResponseEntity<JournalResponseDTO> saveJournal(@Valid @RequestBody JournalRequestDTO dto) {
         try {
             JournalResponseDTO responseDTO = journalEntryService.saveJournal(dto);
             if (responseDTO.getTitle() == null) {
@@ -57,14 +58,15 @@ public class JournalEntryControllerV2 {
 
     @GetMapping("/id/{journalId}")
     public ResponseEntity<JournalResponseDTO> getEntry(@PathVariable ObjectId journalId) {
-        return journalEntryService.getJournalById(journalId) == null
+        JournalResponseDTO responseDTO = journalEntryService.getJournalById(journalId);
+        return responseDTO.getTitle() == null
           ? ResponseEntity.notFound().build()
-          : ResponseEntity.ok().body(journalEntryService.getJournalById(journalId));
+          : ResponseEntity.ok().body(responseDTO);
 
     }
 
     @DeleteMapping("/id/{journalId}")
-    public ResponseEntity<?> deleteJournalById(@PathVariable ObjectId journalId) {
+    public ResponseEntity<String> deleteJournalById(@PathVariable ObjectId journalId) {
        return journalEntryService.deleteJournalById(journalId)
          ? ResponseEntity.status(HttpStatus.NO_CONTENT).body("Successfully Deleted")
          : ResponseEntity.notFound().build();
@@ -72,7 +74,7 @@ public class JournalEntryControllerV2 {
     }
 
     @PutMapping("/id/{journalId}")
-    public ResponseEntity<JournalResponseDTO> updateJournal(@RequestBody JournalRequestDTO dto, @PathVariable ObjectId journalId) {
+    public ResponseEntity<JournalResponseDTO> updateJournal(@Valid@RequestBody JournalRequestDTO dto, @PathVariable ObjectId journalId) {
         JournalResponseDTO responseDTO = journalEntryService.updateJournalById(dto, journalId);
         return responseDTO.getTitle() == null
           ? ResponseEntity.notFound().build()

@@ -28,7 +28,8 @@ public class JournalEntryService {
     Page<JournalResponseDTO> responseList = new PageImpl<>(new ArrayList<>());
     if (!entries.isEmpty()) {
       responseList = entries.map(journalEntry ->
-          JournalResponseDTO.builder().title(journalEntry.getTitle())
+          JournalResponseDTO.builder()
+            .title(journalEntry.getTitle())
             .content(journalEntry.getContent())
             .date(journalEntry.getDate())
             .build()
@@ -49,7 +50,7 @@ public class JournalEntryService {
     if (addedEntry.getId() != null) {
       return JournalResponseDTO.builder()
         .title(addedEntry.getTitle())
-        .content(addedEntry.getTitle())
+        .content(addedEntry.getContent())
         .date(addedEntry.getDate())
         .build();
     }
