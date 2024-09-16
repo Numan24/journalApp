@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -32,8 +33,8 @@ public class JournalEntryControllerV2 {
 
     }
 
-    @GetMapping("/numberOfPage/{numberOfPage}")
-    public ResponseEntity<Page<JournalResponseDTO>> getAllEntries(@PathVariable int numberOfPage) {
+    @GetMapping
+    public ResponseEntity<Page<JournalResponseDTO>> getAllEntries(@RequestParam Integer numberOfPage) {
         return ResponseEntity.ok().body(journalEntryService.getAllJournals(PageRequest.of(numberOfPage,
           10,
           Sort.Direction.DESC, "id")));
