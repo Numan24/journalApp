@@ -1,7 +1,7 @@
 package com.numan.journalapp.controller;
 
 import com.numan.journalapp.entity.UserOfJournal;
-import com.numan.journalapp.service.UserOfJournalService;
+import com.numan.journalapp.service.JournalUserService;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,17 +22,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/journal/user")
 public class UserOfJournalController {
 
-    private final UserOfJournalService userService;
+    private final JournalUserService userService;
 
-    public UserOfJournalController(UserOfJournalService userService) {
+    public UserOfJournalController(JournalUserService userService) {
         this.userService =  userService;
     }
 
-    @GetMapping
-    public ResponseEntity<Page<UserOfJournal>> getAllUserOfJournal(@RequestParam Integer numPage) {
-        return ResponseEntity.ok().body(userService.getAllUsers(PageRequest.of(numPage,
+    @GetMapping("{userName}")
+    public ResponseEntity<Page<UserOfJournal>> getAllJournalEntriesOfUser(@PathVariable String userName,
+                                                                          @RequestParam Integer count) {
+
+        Page<UserOfJournal> userOfJournal = userService.allJournalEntriesOfUser(userName, PageRequest.of(count,
           10,
-          Sort.Direction.DESC, "id")));
+          Sort.Direction.DESC, "id"));
+
+        return userOfJournal.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(userOfJournal);
+
     }
 
     @PostMapping("/{userId}")
@@ -40,9 +45,8 @@ public class UserOfJournalController {
         return ResponseEntity.ok().body(userService.getUserById(userId));
     }
 
-    @PostMapping
-    public ResponseEntity<UserOfJournal> saveUserOfJournal(@RequestBody UserOfJournal user) {
-        System.out.println("hi in save");
+    @PostMapping("{userName}")
+    public ResponseEntity<UserOfJournal> saveUserOfJournal(@RequestBody UserOfJournal user, @PathVariable String userName) {
         return ResponseEntity.ok().body(userService.saveUser(user));
     }
 
@@ -52,7 +56,7 @@ public class UserOfJournalController {
     }
 
     @PutMapping("/{userName}")
-    public ResponseEntity<UserOfJournal> updateUserOfJourna(@RequestBody UserOfJournal user,
+    public ResponseEntity<UserOfJournal> updateUserOfJournal(@RequestBody UserOfJournal user,
                                                             @PathVariable String userName) {
         return ResponseEntity.ok().body(userService.update(user, userName));
     }

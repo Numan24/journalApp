@@ -4,17 +4,18 @@ import com.numan.journalapp.entity.UserOfJournal;
 import com.numan.journalapp.repo.UserOfJournalRepo;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
-public class UserOfJournalService {
+public class JournalUserService {
 
   private final UserOfJournalRepo userOfJournalRepo;
 
-  public UserOfJournalService(UserOfJournalRepo userOfJournalRepo) {
+  public JournalUserService(UserOfJournalRepo userOfJournalRepo) {
     this.userOfJournalRepo = userOfJournalRepo;
   }
 
@@ -61,5 +62,13 @@ public class UserOfJournalService {
 
     return newUser;
 
+  }
+
+  public Page<UserOfJournal> allJournalEntriesOfUser(String userName, PageRequest pageRequest) {
+    return userOfJournalRepo.findByUserName(userName, pageRequest);
+  }
+
+  public UserOfJournal getUserByName(String userName) {
+    return userOfJournalRepo.findByUserName(userName);
   }
 }

@@ -2,6 +2,7 @@ package com.numan.journalapp.controller;
 
 import com.numan.journalapp.dto.JournalRequestDTO;
 import com.numan.journalapp.dto.JournalResponseDTO;
+import com.numan.journalapp.entity.JournalEntry;
 import com.numan.journalapp.service.JournalEntryService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -41,6 +44,12 @@ public class JournalEntryControllerV2 {
 
     }
 
+    @GetMapping("{userName}")
+    public ResponseEntity<List<JournalEntry>> getAllEntriesOfUser(@PathVariable String userName) {
+        return ResponseEntity.ok().body(journalEntryService.getAllJournalsOfUser(userName));
+
+    }
+
     @PostMapping
     public ResponseEntity<JournalResponseDTO> saveJournal(@Valid @RequestBody JournalRequestDTO dto) {
         try {
@@ -49,6 +58,23 @@ public class JournalEntryControllerV2 {
                 return ResponseEntity.badRequest().build();
             } else {
                 return ResponseEntity.ok().body(responseDTO);
+            }
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
+    }
+
+    @PostMapping("{userName}")
+    public ResponseEntity<JournalResponseDTO> saveJournal(@Valid @RequestBody JournalRequestDTO dto,
+                                                          @PathVariable String userName) {
+        try {
+            boolean res = journalEntryService.saveJournalByUser(dto, userName);
+            if (res) {
+                return ResponseEntity.badRequest().build();
+            } else {
+                return ResponseEntity.ok().build();
             }
         } catch (Exception e) {
             log.info(e.getMessage());
