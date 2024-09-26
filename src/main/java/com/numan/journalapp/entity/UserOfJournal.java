@@ -1,7 +1,7 @@
 package com.numan.journalapp.entity;
 
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -12,9 +12,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder
 @Data
 @Document(collection = "users")
+@NoArgsConstructor
 public class UserOfJournal {
 
     @Id
@@ -25,6 +25,6 @@ public class UserOfJournal {
     @NonNull
     private String password;
     @DBRef
-    private List<JournalEntry> journalEntry = new ArrayList<>();
+    private List<JournalEntry> journalEntries = new ArrayList<>();
 
 }

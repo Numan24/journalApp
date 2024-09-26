@@ -24,13 +24,12 @@ public class JournalUserService {
 
   }
 
-  public UserOfJournal saveUser(UserOfJournal dto) {
-
+  public UserOfJournal saveJournalByUser(UserOfJournal dto) {
     UserOfJournal addedUser = userOfJournalRepo.save(dto);
     if (addedUser.getId() != null) {
       return addedUser;
     }
-    return UserOfJournal.builder().build();
+    return new UserOfJournal();
   }
 
   public UserOfJournal getUserById(ObjectId id) {
@@ -38,7 +37,7 @@ public class JournalUserService {
     if (foundUser.isPresent()) {
       return foundUser.get();
     }
-    return UserOfJournal.builder().build();
+    return new UserOfJournal();
   }
 
   public boolean deleteUserById(ObjectId id) {

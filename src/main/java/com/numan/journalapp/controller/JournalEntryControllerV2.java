@@ -36,7 +36,11 @@ public class JournalEntryControllerV2 {
 
     }
 
+    /**
+     * @deprecated
+     */
     @GetMapping
+    @Deprecated(since = "0.1", forRemoval = true)
     public ResponseEntity<Page<JournalResponseDTO>> getAllEntries(@RequestParam Integer numberOfPage) {
         return ResponseEntity.ok().body(journalEntryService.getAllJournals(PageRequest.of(numberOfPage,
           10,
@@ -46,25 +50,11 @@ public class JournalEntryControllerV2 {
 
     @GetMapping("{userName}")
     public ResponseEntity<List<JournalEntry>> getAllEntriesOfUser(@PathVariable String userName) {
-        return ResponseEntity.ok().body(journalEntryService.getAllJournalsOfUser(userName));
+        List<JournalEntry> entries = journalEntryService.getAllJournalsOfUser(userName);
+        return entries.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(entries);
 
     }
 
-    @PostMapping
-    public ResponseEntity<JournalResponseDTO> saveJournal(@Valid @RequestBody JournalRequestDTO dto) {
-        try {
-            JournalResponseDTO responseDTO = journalEntryService.saveJournal(dto);
-            if (responseDTO.getTitle() == null) {
-                return ResponseEntity.badRequest().build();
-            } else {
-                return ResponseEntity.ok().body(responseDTO);
-            }
-        } catch (Exception e) {
-            log.info(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-    }
 
     @PostMapping("{userName}")
     public ResponseEntity<JournalResponseDTO> saveJournal(@Valid @RequestBody JournalRequestDTO dto,
@@ -92,9 +82,9 @@ public class JournalEntryControllerV2 {
 
     }
 
-    @DeleteMapping("/id/{journalId}")
-    public ResponseEntity<String> deleteJournalById(@PathVariable ObjectId journalId) {
-       return journalEntryService.deleteJournalById(journalId)
+    @DeleteMapping("/id/{userName}/{journalId}")
+    public ResponseEntity<String> deleteJournalById(@PathVariable String userName, @PathVariable ObjectId journalId) {
+       return journalEntryService.deleteJournalById(journalId, userName)
          ? ResponseEntity.status(HttpStatus.NO_CONTENT).body("Successfully Deleted")
          : ResponseEntity.notFound().build();
 

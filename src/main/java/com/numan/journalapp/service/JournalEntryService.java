@@ -47,7 +47,10 @@ public class JournalEntryService {
 
   public List<JournalEntry> getAllJournalsOfUser(String userName) {
     UserOfJournal user = userService.getUserByName(userName);
-    List<JournalEntry> entries = user.getJournalEntry();
+    if (user == null) {
+      return new ArrayList<>();
+    }
+    List<JournalEntry> entries = user.getJournalEntries();
     return entries.isEmpty() ? new ArrayList<>() : entries;
   }
 
@@ -77,8 +80,11 @@ public class JournalEntryService {
     return JournalResponseDTO.builder().build();
   }
 
-  public boolean deleteJournalById(ObjectId id) {
-    if (journalEntryRepo.existsById(id)) {
+  public boolean deleteJournalById(ObjectId id, String userName) {
+    UserOfJournal user = userService.getUserByName(userName);
+    if (user != null) {
+      user.getJournalEntries().removeIf(x -> x.getId().equals(id));
+      userService.saveJournalByUser(user);
       journalEntryRepo.deleteById(id);
       return true;
     }
@@ -106,14 +112,13 @@ public class JournalEntryService {
 
   public boolean saveJournalByUser(@Valid JournalRequestDTO dto, String userName) {
     UserOfJournal user = userService.getUserByName(userName);
-
+    if (user == null) {
+      return true;
+    }
     JournalEntry journalEntry = mapDtoToJournalEntry(dto);
-
     JournalEntry savedJournalEntry = journalEntryRepo.save(journalEntry);
-
-    user.getJournalEntry().add(savedJournalEntry);
-
-    return userService.saveUser(user).getId() == null;
+    user.getJournalEntries().add(savedJournalEntry);
+    return userService.saveJournalByUser(user).getId() == null;
   }
 
   private JournalEntry mapDtoToJournalEntry(JournalRequestDTO dto) {

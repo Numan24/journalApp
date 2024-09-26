@@ -45,9 +45,9 @@ public class UserOfJournalController {
         return ResponseEntity.ok().body(userService.getUserById(userId));
     }
 
-    @PostMapping("{userName}")
-    public ResponseEntity<UserOfJournal> saveUserOfJournal(@RequestBody UserOfJournal user, @PathVariable String userName) {
-        return ResponseEntity.ok().body(userService.saveUser(user));
+    @PostMapping
+    public ResponseEntity<UserOfJournal> saveJournalByUser(@RequestBody UserOfJournal user) {
+        return ResponseEntity.ok().body(userService.saveJournalByUser(user));
     }
 
     @DeleteMapping("/{userId}")
