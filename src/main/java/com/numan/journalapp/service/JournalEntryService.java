@@ -6,11 +6,13 @@ import com.numan.journalapp.entity.JournalEntry;
 import com.numan.journalapp.entity.UserOfJournal;
 import com.numan.journalapp.repo.JournalEntryRepo;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class JournalEntryService {
 
   private final JournalEntryRepo journalEntryRepo;
@@ -110,15 +113,19 @@ public class JournalEntryService {
     return JournalResponseDTO.builder().build();
   }
 
+  @Transactional
   public boolean saveJournalByUser(@Valid JournalRequestDTO dto, String userName) {
-    UserOfJournal user = userService.getUserByName(userName);
-    if (user == null) {
-      return true;
+    try {
+      UserOfJournal user = userService.getUserByName(userName);
+      JournalEntry journalEntry = mapDtoToJournalEntry(dto);
+      JournalEntry savedJournalEntry = journalEntryRepo.save(journalEntry);
+      user.getJournalEntries().add(savedJournalEntry);
+      return userService.saveJournalByUser(user).getId() == null;
+    } catch (RuntimeException re) {
+      log.error(re.getMessage());
+      log.error(re.toString());
+      throw new RuntimeException("Error happened while saving", re);
     }
-    JournalEntry journalEntry = mapDtoToJournalEntry(dto);
-    JournalEntry savedJournalEntry = journalEntryRepo.save(journalEntry);
-    user.getJournalEntries().add(savedJournalEntry);
-    return userService.saveJournalByUser(user).getId() == null;
   }
 
   private JournalEntry mapDtoToJournalEntry(JournalRequestDTO dto) {
