@@ -64,7 +64,7 @@ public class JournalEntryControllerV2 {
             if (res) {
                 return ResponseEntity.badRequest().build();
             } else {
-                return ResponseEntity.ok().build();
+                return ResponseEntity.status(HttpStatus.CREATED).build();
             }
         } catch (Exception e) {
             log.info(e.getMessage());
