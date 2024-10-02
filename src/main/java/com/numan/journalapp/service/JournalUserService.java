@@ -6,12 +6,17 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
 public class JournalUserService {
+
+  private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(6);
 
   private final UserOfJournalRepo userOfJournalRepo;
 
@@ -30,6 +35,13 @@ public class JournalUserService {
       return addedUser;
     }
     return new UserOfJournal();
+  }
+
+  public UserOfJournal registerUser(UserOfJournal dto) {
+    dto.setPassword(passwordEncoder.encode(dto.getPassword()));
+    dto.setRoles(Arrays.asList("USER"));
+    UserOfJournal addedUser = userOfJournalRepo.save(dto);
+    return addedUser.getId() == null ? new UserOfJournal() : addedUser;
   }
 
   public UserOfJournal getUserById(ObjectId id) {

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/journal/user")
+@RequestMapping("/user")
 public class UserOfJournalController {
 
     private final JournalUserService userService;
@@ -46,8 +46,8 @@ public class UserOfJournalController {
     }
 
     @PostMapping
-    public ResponseEntity<UserOfJournal> saveJournalByUser(@RequestBody UserOfJournal user) {
-        return ResponseEntity.ok().body(userService.saveJournalByUser(user));
+    public ResponseEntity<UserOfJournal> registerUser(@RequestBody UserOfJournal user) {
+        return ResponseEntity.ok().body(userService.registerUser(user));
     }
 
     @DeleteMapping("/{userId}")
