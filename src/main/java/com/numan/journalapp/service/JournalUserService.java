@@ -61,6 +61,11 @@ public class JournalUserService {
     return false;
   }
 
+  public boolean deleteUserByName(String name) {
+    long ans = userOfJournalRepo.deleteByUserName(name);
+    return ans == 0;
+  }
+
 
   public UserOfJournal update(UserOfJournal user) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
