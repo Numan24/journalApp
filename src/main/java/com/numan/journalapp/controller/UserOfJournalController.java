@@ -54,9 +54,7 @@ public class UserOfJournalController {
 
     @PutMapping
     public ResponseEntity<UserOfJournal> updateUserOfJournal(@RequestBody UserOfJournal user) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String userName = authentication.getName();
-        return ResponseEntity.ok().body(userService.update(user, userName));
+        return ResponseEntity.ok().body(userService.update(user));
     }
 
 
