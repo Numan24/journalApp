@@ -9,16 +9,14 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
 @EnableWebSecurity
+@Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class SpringSecurity {
 
   private final UserDetailsServiceImpl userDetailsService;
 
@@ -26,9 +24,8 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
    return httpSecurity
       .authorizeHttpRequests(request -> request
-        .requestMatchers("/public/**").permitAll()
-        .requestMatchers("/user").permitAll()
         .requestMatchers("/journal/**").authenticated()
+        .requestMatchers("/register/**").permitAll()
         .requestMatchers("/admin/**").hasRole("ADMIN")
         .anyRequest().authenticated())
         .httpBasic(Customizer.withDefaults())
@@ -39,12 +36,12 @@ public class SecurityConfig {
 
   @Autowired
   public void configGlobal(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-    authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+      authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
   }
 
   @Bean
-  public PasswordEncoder passwordEncoder() {
-    return new BCryptPasswordEncoder(6);
+  public BCryptPasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder(4);
   }
 
 }

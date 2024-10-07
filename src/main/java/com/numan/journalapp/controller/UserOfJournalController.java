@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,19 +47,15 @@ public class UserOfJournalController {
         return ResponseEntity.ok().body(userService.getUserById(userId));
     }
 
-    @PostMapping
-    public ResponseEntity<UserOfJournal> registerUser(@RequestBody UserOfJournal user) {
-        return ResponseEntity.ok().body(userService.registerUser(user));
-    }
-
     @DeleteMapping("/{userId}")
     public ResponseEntity<String> deleteByUserId(@PathVariable ObjectId userId) {
         return ResponseEntity.ok().body(userService.deleteUserById(userId) ? "successfully deleted" : "not deleted");
     }
 
-    @PutMapping("/{userName}")
-    public ResponseEntity<UserOfJournal> updateUserOfJournal(@RequestBody UserOfJournal user,
-                                                            @PathVariable String userName) {
+    @PutMapping
+    public ResponseEntity<UserOfJournal> updateUserOfJournal(@RequestBody UserOfJournal user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
         return ResponseEntity.ok().body(userService.update(user, userName));
     }
 
