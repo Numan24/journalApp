@@ -47,9 +47,9 @@ public class UserOfJournalController {
         return ResponseEntity.ok().body(userService.getUserById(userId));
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<String> deleteByUserId(@PathVariable ObjectId userId) {
-        return ResponseEntity.ok().body(userService.deleteUserById(userId) ? "successfully deleted" : "not deleted");
+    @DeleteMapping("/{userName}")
+    public ResponseEntity<String> deleteByName(@PathVariable String userName) {
+        return ResponseEntity.ok().body(userService.deleteUserByName(userName) ? "successfully deleted" : "not found");
     }
 
     @PutMapping

@@ -19,5 +19,7 @@ public interface UserOfJournalRepo extends MongoRepository<UserOfJournal, Object
   UserOfJournal findByUserName(String userName);
 
   Page<UserOfJournal> findByUserName(String userName, Pageable pageable);
+
+  long deleteByUserName(String userName);
 }
 
