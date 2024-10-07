@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,8 +38,7 @@ public class JournalUserService {
   }
 
   public UserOfJournal registerUser(UserOfJournal dto) {
-    dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-    dto.setRoles(Arrays.asList("USER"));
+    encodePasswordAndSetUserRole(dto);
     UserOfJournal addedUser = userOfJournalRepo.save(dto);
     return addedUser.getId() == null ? new UserOfJournal() : addedUser;
   }
@@ -67,7 +66,7 @@ public class JournalUserService {
 
     if(oldUser != null) {
       oldUser.setUserName(user.getUserName());
-      oldUser.setPassword(user.getPassword());
+      encodePasswordAndSetUserRole(oldUser);
       newUser = userOfJournalRepo.save(oldUser);
     }
 
@@ -81,5 +80,10 @@ public class JournalUserService {
 
   public UserOfJournal getUserByName(String userName) {
     return userOfJournalRepo.findByUserName(userName);
+  }
+
+  private void encodePasswordAndSetUserRole(UserOfJournal userOfJournal) {
+    userOfJournal.setPassword(passwordEncoder.encode(userOfJournal.getPassword()));
+    userOfJournal.setRoles(List.of("USER"));
   }
 }
