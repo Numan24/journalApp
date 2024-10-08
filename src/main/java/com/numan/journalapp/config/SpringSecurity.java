@@ -24,7 +24,7 @@ public class SpringSecurity {
   public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
    return httpSecurity
       .authorizeHttpRequests(request -> request
-        .requestMatchers("/journal/**").authenticated()
+        .requestMatchers("/journal/**", "/journalv2/**").authenticated()
         .requestMatchers("/register/**").permitAll()
         .requestMatchers("/admin/**").hasRole("ADMIN")
         .anyRequest().authenticated())
