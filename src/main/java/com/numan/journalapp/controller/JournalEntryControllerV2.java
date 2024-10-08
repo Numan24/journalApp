@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,7 +41,6 @@ public class JournalEntryControllerV2 {
     /**
      * @deprecated
      */
-    @GetMapping
     @Deprecated(since = "0.1", forRemoval = true)
     public ResponseEntity<Page<JournalResponseDTO>> getAllEntries(@RequestParam Integer numberOfPage) {
         return ResponseEntity.ok().body(journalEntryService.getAllJournals(PageRequest.of(numberOfPage,
@@ -48,19 +49,20 @@ public class JournalEntryControllerV2 {
 
     }
 
-    @GetMapping("{userName}")
-    public ResponseEntity<List<JournalEntry>> getAllEntriesOfUser(@PathVariable String userName) {
+    @GetMapping
+    public ResponseEntity<List<JournalEntry>> getAllEntriesOfUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String userName = authentication.getName();
         List<JournalEntry> entries = journalEntryService.getAllJournalsOfUser(userName);
         return entries.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok().body(entries);
 
     }
 
 
-    @PostMapping("{userName}")
-    public ResponseEntity<JournalResponseDTO> saveJournal(@Valid @RequestBody JournalRequestDTO dto,
-                                                          @PathVariable String userName) {
+    @PostMapping
+    public ResponseEntity<JournalResponseDTO> saveJournal(@Valid @RequestBody JournalRequestDTO dto) {
         try {
-            boolean res = journalEntryService.saveJournalByUser(dto, userName);
+            boolean res = journalEntryService.saveJournalByUser(dto);
             if (res) {
                 return ResponseEntity.badRequest().build();
             } else {
@@ -73,7 +75,7 @@ public class JournalEntryControllerV2 {
 
     }
 
-    @GetMapping("/id/{journalId}")
+    @GetMapping("/journalId/{journalId}")
     public ResponseEntity<JournalResponseDTO> getEntry(@PathVariable ObjectId journalId) {
         JournalResponseDTO responseDTO = journalEntryService.getJournalById(journalId);
         return responseDTO.getTitle() == null
@@ -82,15 +84,15 @@ public class JournalEntryControllerV2 {
 
     }
 
-    @DeleteMapping("/id/{userName}/{journalId}")
-    public ResponseEntity<String> deleteJournalById(@PathVariable String userName, @PathVariable ObjectId journalId) {
-       return journalEntryService.deleteJournalById(journalId, userName)
+    @DeleteMapping("/journalId/{journalId}")
+    public ResponseEntity<String> deleteJournalById(@PathVariable ObjectId journalId) {
+       return journalEntryService.deleteJournalById(journalId)
          ? ResponseEntity.status(HttpStatus.NO_CONTENT).body("Successfully Deleted")
          : ResponseEntity.notFound().build();
 
     }
 
-    @PutMapping("/id/{journalId}")
+    @PutMapping("/journalId/{journalId}")
     public ResponseEntity<JournalResponseDTO> updateJournal(@Valid@RequestBody JournalRequestDTO dto, @PathVariable ObjectId journalId) {
         JournalResponseDTO responseDTO = journalEntryService.updateJournalById(dto, journalId);
         return responseDTO.getTitle() == null
