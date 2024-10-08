@@ -11,8 +11,6 @@ import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,8 +19,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -91,36 +87,55 @@ public class JournalEntryService {
     return JournalResponseDTO.builder().build();
   }
 
+  @Transactional
   public boolean deleteJournalById(ObjectId journalId) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String userName = authentication.getName();
-    UserOfJournal user = userService.getUserByName(userName);
-    boolean ans = user.getJournalEntries().removeIf(x -> x.getId().equals(journalId));
-    if (ans) {
-      journalEntryRepo.deleteById(journalId);
-      userService.saveJournalByUser(user);
-      return true;
+    boolean ans = false;
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      String userName = authentication.getName();
+      UserOfJournal user = userService.getUserByName(userName);
+      ans = user.getJournalEntries().removeIf(x -> x.getId().equals(journalId));
+      if (ans) {
+        journalEntryRepo.deleteById(journalId);
+        userService.saveJournalByUser(user);
+      }
+    } catch (Exception e) {
+      log.error("error occurred: ", e);
+      throw new RuntimeException("An error occurred while deleting journal entry.", e);
     }
-    return false;
+    return ans;
   }
 
+  @Transactional
   public JournalResponseDTO updateJournalById(JournalRequestDTO dto, ObjectId id) {
-    JournalEntry oldEntry = journalEntryRepo.findById(id).orElse(null);
-    JournalEntry newEntry = JournalEntry.builder().build();
-    if (oldEntry != null) {
-      oldEntry.setContent(dto.getContent() != null && !dto.getContent().isEmpty() ? dto.getContent() : oldEntry.getContent());
-      oldEntry.setTitle(dto.getTitle() != null && !dto.getTitle().isEmpty() ? dto.getTitle() : oldEntry.getTitle());
-      oldEntry.setDate(LocalDateTime.now());
-      newEntry = journalEntryRepo.save(oldEntry);
+    try {
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      String userName = authentication.getName();
+      UserOfJournal userOfJournal = userService.getUserByName(userName);
+      List<JournalEntry> journalEntries = userOfJournal.getJournalEntries().stream().filter(x -> x.getId().equals(id)).toList();
+
+      if (!journalEntries.isEmpty()) {
+        JournalEntry oldEntry = journalEntryRepo.findById(id).orElse(null);
+        JournalEntry newEntry = new JournalEntry();
+        if (oldEntry != null) {
+          oldEntry.setContent(dto.getContent() != null && !dto.getContent().isEmpty() ? dto.getContent() : oldEntry.getContent());
+          oldEntry.setTitle(dto.getTitle() != null && !dto.getTitle().isEmpty() ? dto.getTitle() : oldEntry.getTitle());
+          oldEntry.setDate(LocalDateTime.now());
+          newEntry = journalEntryRepo.save(oldEntry);
+        }
+        return JournalResponseDTO.builder()
+          .title(newEntry.getTitle())
+          .date(newEntry.getDate())
+          .content(newEntry.getContent())
+          .build();
+      }
+    } catch (Exception e) {
+      log.error("error occurred: ", e);
+      throw new RuntimeException("an error happened while updating", e);
     }
-    if (newEntry.getId() != null) {
-      return JournalResponseDTO.builder()
-        .title(newEntry.getTitle())
-        .date(newEntry.getDate())
-        .content(newEntry.getContent())
-        .build();
-    }
+
     return JournalResponseDTO.builder().build();
+
   }
 
   @Transactional
