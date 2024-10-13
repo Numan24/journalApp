@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class JournalUserService {
 
-  private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(6);
+  private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(4);
 
   private final UserOfJournalRepo userOfJournalRepo;
 
