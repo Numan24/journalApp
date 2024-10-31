@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
-public class TestsUserDetailsServiceImpl {
+class TestsUserDetailsServiceImpl {
 
   @InjectMocks
   private UserDetailsServiceImpl userDetailsService;
