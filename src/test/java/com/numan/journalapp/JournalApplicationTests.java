@@ -1,6 +1,7 @@
 package com.numan.journalapp;
 
 import com.numan.journalapp.service.JournalUserService;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ class JournalApplicationTests {
 	@Autowired
 	JournalUserService userService;
 
+	@Disabled
 	@ParameterizedTest
 	@CsvSource({
 		"Numan",

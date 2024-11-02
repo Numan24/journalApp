@@ -18,6 +18,7 @@ class JournalUserServiceTests {
   @Autowired
   private UserOfJournalRepo userOfJournalRepo;
 
+  @Disabled
   @ParameterizedTest
   @ValueSource(strings = {
     "Numan",

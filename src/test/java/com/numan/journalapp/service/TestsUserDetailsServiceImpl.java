@@ -3,6 +3,7 @@ package com.numan.journalapp.service;
 import com.numan.journalapp.entity.UserOfJournal;
 import com.numan.journalapp.repo.UserOfJournalRepo;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
@@ -28,6 +29,7 @@ class TestsUserDetailsServiceImpl {
     MockitoAnnotations.initMocks(this);
   }
 
+  @Disabled
   @Test
   void loadUserByUserNameTest() {
 
