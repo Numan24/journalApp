@@ -15,7 +15,7 @@ target/
 /htmlReport
 *.log
 *.yml
-*/mvn
+/.mvn
 ### IntelliJ IDEA ###
 .idea
 *.iws
