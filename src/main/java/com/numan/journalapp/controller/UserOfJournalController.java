@@ -1,7 +1,9 @@
 package com.numan.journalapp.controller;
 
+import com.numan.journalapp.dto.WeatherResponseDTO;
 import com.numan.journalapp.entity.UserOfJournal;
 import com.numan.journalapp.service.JournalUserService;
+import com.numan.journalapp.service.WeatherService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,9 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserOfJournalController {
 
     private final JournalUserService userService;
+    private final WeatherService weatherService;
 
-    public UserOfJournalController(JournalUserService userService) {
+    public UserOfJournalController(JournalUserService userService, WeatherService weatherService) {
         this.userService =  userService;
+        this.weatherService = weatherService;
     }
 
     @GetMapping("/all-journals")
@@ -56,7 +60,8 @@ public class UserOfJournalController {
     @GetMapping("/hi")
     public ResponseEntity<String> greetings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok().body("Hi " + authentication.getName());
+        WeatherResponseDTO weatherResponseDTO = weatherService.getWeather("Karachi");
+        return ResponseEntity.ok().body("Hi " + authentication.getName() + " Karachi weather feels like " + weatherResponseDTO.getCurrent().getFeelslike());
     }
 
 
