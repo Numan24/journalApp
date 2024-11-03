@@ -24,6 +24,7 @@ public class JournalUserService {
 
   public JournalUserService(UserOfJournalRepo userOfJournalRepo) {
     this.userOfJournalRepo = userOfJournalRepo;
+
   }
 
   public Page<UserOfJournal> getAllUsers(Pageable pageable) {
@@ -37,12 +38,14 @@ public class JournalUserService {
       return addedUser;
     }
     return new UserOfJournal();
+
   }
 
   public UserOfJournal registerUser(UserOfJournal dto) {
     encodePasswordAndSetUserRole(dto);
     UserOfJournal addedUser = userOfJournalRepo.save(dto);
     return addedUser.getId() == null ? new UserOfJournal() : addedUser;
+
   }
 
   public UserOfJournal getUserById(ObjectId id) {
@@ -51,21 +54,16 @@ public class JournalUserService {
       return foundUser.get();
     }
     return new UserOfJournal();
+
   }
 
-  public boolean deleteUserById(ObjectId id) {
-    if (userOfJournalRepo.existsById(id)) {
-      userOfJournalRepo.deleteById(id);
-      return true;
-    }
-    return false;
-  }
-
-  public boolean deleteUserByName(String name) {
-    long ans = userOfJournalRepo.deleteByUserName(name);
+  public boolean deleteUserByName() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String userName = authentication.getName();
+    long ans = userOfJournalRepo.deleteByUserName(userName);
     return ans == 0;
-  }
 
+  }
 
   public UserOfJournal update(UserOfJournal user) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -78,21 +76,32 @@ public class JournalUserService {
       encodePasswordAndSetUserRole(user);
       newUser = userOfJournalRepo.save(oldUser);
     }
-
     return newUser;
 
   }
 
-  public Page<UserOfJournal> allJournalEntriesOfUser(String userName, PageRequest pageRequest) {
+  public Page<UserOfJournal> allJournalEntriesOfUser(PageRequest pageRequest) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String userName = authentication.getName();
     return userOfJournalRepo.findByUserName(userName, pageRequest);
+
   }
 
   public UserOfJournal getUserByName(String userName) {
     return userOfJournalRepo.findByUserName(userName);
+
   }
 
   private void encodePasswordAndSetUserRole(UserOfJournal userOfJournal) {
     userOfJournal.setPassword(passwordEncoder.encode(userOfJournal.getPassword()));
     userOfJournal.setRoles(List.of("USER"));
+
   }
+
+  public UserOfJournal findingLoggedInUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    String userName = authentication.getName();
+    return getUserByName(userName);
+  }
+
 }
