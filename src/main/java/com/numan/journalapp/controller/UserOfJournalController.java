@@ -2,15 +2,14 @@ package com.numan.journalapp.controller;
 
 import com.numan.journalapp.entity.UserOfJournal;
 import com.numan.journalapp.service.JournalUserService;
-import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +27,9 @@ public class UserOfJournalController {
         this.userService =  userService;
     }
 
-    @GetMapping("{userName}")
-    public ResponseEntity<Page<UserOfJournal>> getAllJournalEntriesOfUser(@PathVariable String userName,
-                                                                          @RequestParam Integer count) {
-
-        Page<UserOfJournal> userOfJournal = userService.allJournalEntriesOfUser(userName, PageRequest.of(count,
+    @GetMapping("/all-journals")
+    public ResponseEntity<Page<UserOfJournal>> getAllJournalEntriesOfUser(@RequestParam Integer count) {
+        Page<UserOfJournal> userOfJournal = userService.allJournalEntriesOfUser(PageRequest.of(count,
           10,
           Sort.Direction.DESC, "id"));
 
@@ -40,14 +37,15 @@ public class UserOfJournalController {
 
     }
 
-    @PostMapping("/{userId}")
-    public ResponseEntity<UserOfJournal> findByJournalUserId(@PathVariable ObjectId userId) {
-        return ResponseEntity.ok().body(userService.getUserById(userId));
+    @GetMapping
+    public ResponseEntity<UserOfJournal> findJournalUser() {
+        return ResponseEntity.ok().body(userService.findingLoggedInUser());
+
     }
 
-    @DeleteMapping("/{userName}")
-    public ResponseEntity<String> deleteByName(@PathVariable String userName) {
-        return ResponseEntity.ok().body(userService.deleteUserByName(userName) ? "successfully deleted" : "not found");
+    @DeleteMapping
+    public ResponseEntity<String> deleteUser() {
+        return ResponseEntity.ok().body(userService.deleteUserByName() ? "successfully deleted" : "not found");
     }
 
     @PutMapping
@@ -55,10 +53,11 @@ public class UserOfJournalController {
         return ResponseEntity.ok().body(userService.update(user));
     }
 
-
-
-
-
+    @GetMapping("/hi")
+    public ResponseEntity<String> greetings() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return ResponseEntity.ok().body("Hi " + authentication.getName());
+    }
 
 
 
