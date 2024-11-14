@@ -6,3 +6,7 @@ server:
   port: 9010
   servlet:
     context-path: /journal
+
+weather:
+  api:
+    key: 22e812b80502db446c71962a2bfde5c0
