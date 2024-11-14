@@ -16,9 +16,4 @@ public class JournalApplication {
 		//System.out.println(configurableEnvironment.getActiveProfiles()[0]);
 	}
 
-	@Bean
-	public RestTemplate restTemplate() {
-		return new RestTemplate();
-	}
-
 }
