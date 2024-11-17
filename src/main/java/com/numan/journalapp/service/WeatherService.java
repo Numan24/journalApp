@@ -1,5 +1,6 @@
 package com.numan.journalapp.service;
 
+import com.numan.journalapp.cached.AppCache;
 import com.numan.journalapp.dto.WeatherResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,19 +13,20 @@ import org.springframework.web.client.RestTemplate;
 public class WeatherService {
 
   private RestTemplate restTemplate;
+  private AppCache appCache;
 
-  WeatherService(RestTemplate restTemplate) {
+  WeatherService(RestTemplate restTemplate, AppCache appCache) {
     this.restTemplate = restTemplate;
+    this.appCache = appCache;
 
   }
 
   @Value("${weather.api.key}")
   private String apiKey;
-  private static final String API = "https://api.weatherstack.com/current?access_key=API_KEY&query=CITY";
 
 
   public WeatherResponseDTO getWeather(String city) {
-    String finalApi = API.replace("CITY", city).replace("API_KEY", apiKey);
+    String finalApi = appCache.AppConfigCache.get(AppCache.AppConfigKeys.WEATHER_API.name()).replace("<city>", city).replace("<apiKey>", apiKey);
     ResponseEntity<WeatherResponseDTO> responseEntity = restTemplate.exchange(finalApi, HttpMethod.GET, null, WeatherResponseDTO.class);
     return responseEntity.getBody();
 
