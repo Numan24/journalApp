@@ -1,5 +1,6 @@
 package com.numan.journalapp.entity;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,13 +24,22 @@ public class UserOfJournal {
 
     @Id
     private ObjectId id;
+
     @Indexed(unique = true)
     @NonNull
     private String userName;
+
     @NonNull
     private String password;
+
+    private boolean isSentimentAnalysis;
+
+    @NotBlank
+    private String email;
+
     @DBRef
     private List<JournalEntry> journalEntries = new ArrayList<>();
+
     private List<String> roles;
 
 }
