@@ -8,3 +8,6 @@ spring:
       auto-index-creation: true
   application:
     name: Journal Application
+  redis:
+    host: localhost
+    port: 6379
