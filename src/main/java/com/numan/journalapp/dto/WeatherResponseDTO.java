@@ -1,33 +1,42 @@
 package com.numan.journalapp.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class WeatherResponseDTO {
   private Location location;
   private Current current;
 
   @Data
- public class Current {
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Current {
 
-   private int temperature;
-   private ArrayList<String> weatherDescriptions;
-   @JsonProperty("windSpeed")
-   private int windSpeed;
-   private int precip;
-   private int humidity;
-   private int feelslike;
+    private int temperature;
+    private ArrayList<String> weatherDescriptions;
+    @JsonProperty("windSpeed")
+    private int windSpeed;
+    private int precip;
+    private int humidity;
+    private int feelslike;
 
- }
+  }
 
-   public class Location{
-     private String name;
-     private String country;
-     private String region;
-     private String localtime;
+  @Data
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public class Location {
+    private String name;
+    private String country;
+    private String region;
+    private String localtime;
   }
 
 }
