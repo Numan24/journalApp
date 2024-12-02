@@ -22,7 +22,11 @@ public class RedisService {
 
     try {
       Object o = redisTemplate.opsForValue().get(key);
-      return objectMapper.readValue(o.toString(), entityClass);
+      if (o != null) {
+        return objectMapper.readValue(o.toString(), entityClass);
+      } else {
+        return null;
+      }
     } catch (Exception exception) {
       log.error("error happened", exception);
       return null;

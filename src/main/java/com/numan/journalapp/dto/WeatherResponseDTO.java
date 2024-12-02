@@ -23,9 +23,11 @@ public class WeatherResponseDTO {
     private ArrayList<String> weatherDescriptions;
     @JsonProperty("windSpeed")
     private int windSpeed;
-    private int precip;
+    @JsonProperty("precip")
+    private int precIp;
     private int humidity;
-    private int feelslike;
+    @JsonProperty("feelslike")
+    private int feelsLike;
 
   }
 
