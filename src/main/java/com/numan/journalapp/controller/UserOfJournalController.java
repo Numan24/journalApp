@@ -61,7 +61,7 @@ public class UserOfJournalController {
     public ResponseEntity<String> greetings() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         WeatherResponseDTO weatherResponseDTO = weatherService.getWeather("Karachi");
-        return ResponseEntity.ok().body("Hi " + authentication.getName() + " Karachi weather feels like " + weatherResponseDTO.getCurrent().getFeelslike());
+        return ResponseEntity.ok().body("Hi " + authentication.getName() + " Karachi weather feels like " + weatherResponseDTO.getCurrent().getFeelsLike());
     }
 
 
