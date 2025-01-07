@@ -6,9 +6,9 @@ spring:
       uri: mongodb+srv://noomaan24:EC623KNBx1BQWj16@cluster0.566k9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
       database: journaldb
       auto-index-creation: true
+    redis:
+      host: redis-14822.c305.ap-south-1-1.ec2.redns.redis-cloud.com
+      port: 14822
+      password: X4A9qYBwIM9CXNlVCPmbR3dzDvCSAuMk
   application:
     name: Journal Application
-  redis:
-    host: redis-14822.c305.ap-south-1-1.ec2.redns.redis-cloud.com
-    port: 14822
-    password: X4A9qYBwIM9CXNlVCPmbR3dzDvCSAuMk
