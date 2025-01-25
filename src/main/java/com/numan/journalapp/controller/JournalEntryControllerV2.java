@@ -5,6 +5,7 @@ import com.numan.journalapp.dto.JournalResponseDTO;
 import com.numan.journalapp.entity.JournalEntry;
 import com.numan.journalapp.service.JournalEntryService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
@@ -29,14 +30,10 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/journalv2")
+@RequiredArgsConstructor
 public class JournalEntryControllerV2 {
 
     private final JournalEntryService journalEntryService;
-
-    public JournalEntryControllerV2(JournalEntryService journalEntryService) {
-        this.journalEntryService = journalEntryService;
-
-    }
 
     /**
      * @deprecated
