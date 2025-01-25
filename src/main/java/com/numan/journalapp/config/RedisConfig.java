@@ -16,10 +16,10 @@ public class RedisConfig {
   @Bean
   public JedisConnectionFactory connectionFactory() {
     RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
-    configuration.setHostName( "redis-14822.c305.ap-south-1-1.ec2.redns.redis-cloud.com");
-    configuration.setPort(14822);
+    configuration.setHostName( "redis-16325.c305.ap-south-1-1.ec2.redns.redis-cloud.com");
+    configuration.setPort(16325);
     configuration.setUsername("default");
-    configuration.setPassword("X4A9qYBwIM9CXNlVCPmbR3dzDvCSAuMk");
+    configuration.setPassword("yJd7cvU2cLyOCBBbrVPtudiuCNZcXQac");
     return new JedisConnectionFactory(configuration);
 
   }
