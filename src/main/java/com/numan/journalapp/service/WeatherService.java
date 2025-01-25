@@ -27,7 +27,7 @@ public class WeatherService {
   private String apiKey;
 
 
-  public WeatherResponseDTO getWeather(String city) {
+  public WeatherResponseDTO getWeather(final String city) {
     WeatherResponseDTO weatherResponseDTO = redisService.getFromRedis("weather_of" + city, WeatherResponseDTO.class);
     if (weatherResponseDTO != null) {
       return weatherResponseDTO;
@@ -35,7 +35,7 @@ public class WeatherService {
     String finalApi = appCache.AppConfigCache.get(AppCache.AppConfigKeys.WEATHER_API.name()).replace("<city>", city).replace("<apiKey>", apiKey);
     ResponseEntity<WeatherResponseDTO> responseEntity = restTemplate.exchange(finalApi, HttpMethod.GET, null, WeatherResponseDTO.class);
     if (responseEntity.hasBody()) {
-      redisService.setInRedis("weather_of"+ city, responseEntity.getBody(), 3000L);
+      redisService.setInRedis("weather_of" + city, responseEntity.getBody(), 3000L);
     }
     return responseEntity.getBody();
 

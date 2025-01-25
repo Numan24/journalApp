@@ -4,6 +4,7 @@ import com.numan.journalapp.dto.WeatherResponseDTO;
 import com.numan.journalapp.entity.UserOfJournal;
 import com.numan.journalapp.service.JournalUserService;
 import com.numan.journalapp.service.WeatherService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,15 +22,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserOfJournalController {
 
     private final JournalUserService userService;
     private final WeatherService weatherService;
-
-    public UserOfJournalController(JournalUserService userService, WeatherService weatherService) {
-        this.userService =  userService;
-        this.weatherService = weatherService;
-    }
 
     @GetMapping("/all-journals")
     public ResponseEntity<Page<UserOfJournal>> getAllJournalEntriesOfUser(@RequestParam Integer count) {

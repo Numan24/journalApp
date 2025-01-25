@@ -6,6 +6,7 @@ import com.numan.journalapp.entity.JournalEntry;
 import com.numan.journalapp.entity.UserOfJournal;
 import com.numan.journalapp.repo.JournalEntryRepo;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Pageable;
@@ -22,20 +23,17 @@ import java.util.List;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class JournalEntryService {
 
   private final JournalEntryRepo journalEntryRepo;
   private final JournalUserService userService;
 
-  public JournalEntryService(JournalEntryRepo journalEntryRepo,
-                             JournalUserService journalUserService) {
-    this.journalEntryRepo = journalEntryRepo;
-    this.userService = journalUserService;
-  }
 
-  public Page<JournalResponseDTO> getAllJournals(Pageable pageable) {
+  public Page<JournalResponseDTO> getAllJournals(final Pageable pageable) {
     Page<JournalEntry> entries = journalEntryRepo.findAll(pageable);
     Page<JournalResponseDTO> responseList = new PageImpl<>(new ArrayList<>());
+
     if (!entries.isEmpty()) {
       responseList = entries.map(journalEntry ->
           JournalResponseDTO.builder()
@@ -49,8 +47,9 @@ public class JournalEntryService {
   }
 
 
-  public List<JournalEntry> getAllJournalsOfUser(String userName) {
+  public List<JournalEntry> getAllJournalsOfUser(final String userName) {
     UserOfJournal user = userService.getUserByName(userName);
+
     if (user == null) {
       return new ArrayList<>();
     }
@@ -72,7 +71,7 @@ public class JournalEntryService {
     return JournalResponseDTO.builder().build();
   }
 
-  public JournalResponseDTO getJournalById(ObjectId id) {
+  public JournalResponseDTO getJournalById(final ObjectId id) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String userName = authentication.getName();
     List<JournalEntry> journalEntries = getAllJournalsOfUser(userName);
@@ -88,7 +87,7 @@ public class JournalEntryService {
   }
 
   @Transactional
-  public boolean deleteJournalById(ObjectId journalId) {
+  public boolean deleteJournalById(final ObjectId journalId) {
     boolean ans = false;
     try {
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -107,7 +106,7 @@ public class JournalEntryService {
   }
 
   @Transactional
-  public JournalResponseDTO updateJournalById(JournalRequestDTO dto, ObjectId id) {
+  public JournalResponseDTO updateJournalById(final JournalRequestDTO dto, final ObjectId id) {
     try {
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       String userName = authentication.getName();
@@ -139,7 +138,7 @@ public class JournalEntryService {
   }
 
   @Transactional
-  public boolean saveJournalByUser(@Valid JournalRequestDTO dto) {
+  public boolean saveJournalByUser(@Valid final JournalRequestDTO dto) {
     try {
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       String userName = authentication.getName();
@@ -155,7 +154,7 @@ public class JournalEntryService {
     }
   }
 
-  private JournalEntry mapDtoToJournalEntry(JournalRequestDTO dto) {
+  private JournalEntry mapDtoToJournalEntry(final JournalRequestDTO dto) {
     return JournalEntry.builder()
       .id(dto.getId())
       .date(LocalDateTime.now())
