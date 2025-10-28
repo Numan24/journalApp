@@ -16,7 +16,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   private final UserOfJournalRepo userOfJournalRepo;
 
   @Override
-  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+  public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
     UserOfJournal userOfJournal = userOfJournalRepo.findByUserName(username);
 
     if (userOfJournal != null) {
