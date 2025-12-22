@@ -17,8 +17,7 @@ public class LoginService {
   public String authenticate(String username, String password) throws BadRequestException {
     Authentication authentication = authManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     if (authentication.isAuthenticated()) {
-      String jwtToken = JwtUtil.generateToken(username);
-      return jwtToken;
+      return JwtUtil.generateToken(username);
     }
     throw new BadRequestException("User not Found");
   }
