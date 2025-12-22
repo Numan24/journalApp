@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
       return User.builder()
         .username(userOfJournal.getUserName())
         .password(userOfJournal.getPassword())
-        .roles(userOfJournal.getRoles().toArray(new String[0]))
+        .authorities(userOfJournal.getRoles().stream().map(role -> "ROLE_" + role).toArray(String[]::new))
         .build();
     }
 
